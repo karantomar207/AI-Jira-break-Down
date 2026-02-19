@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jira AI Breakdown</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🤖</div>
+            <div>
+                <div class="title">Jira <span>AI</span></div>
+                <div class="subtitle" id="page-context">Detecting Jira context…</div>
+            </div>
+        </div>
+        <button class="settings-btn" id="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <!-- No credentials warning -->
+    <div id="no-creds-warning" class="warning-banner" style="display:none;">
+        ⚠️ Please <a href="#" id="open-settings-link">configure your credentials</a> first.
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" data-tab="breakdown">✂️ Break Story</button>
+        <button class="tab" data-tab="create">✨ Create Issue</button>
+    </div>
+
+    <!-- ─── TAB: Break Story ─── -->
+    <div id="tab-breakdown" class="tab-content">
+
+        <!-- Core fields -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Story Key <span class="required">*</span></label>
+                <input type="text" id="bd-story-key" placeholder="e.g. KAN-2" />
+            </div>
+            <div class="form-group">
+                <label>Project Key <span class="required">*</span></label>
+                <input type="text" id="bd-project-key" placeholder="e.g. KAN" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Break Into <span id="bd-types-badge" class="types-badge" style="display:none;"></span></label>
+                <select id="bd-break-type" disabled>
+                    <option value="">Enter project key…</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Count</label>
+                <input type="number" id="bd-num-subtasks" value="5" min="1" max="20" />
+            </div>
+        </div>
+
+        <!-- Advanced Options toggle -->
+        <button class="adv-toggle" id="adv-toggle">
+            <span id="adv-toggle-icon">▶</span> Advanced Options
+        </button>
+
+        <div id="adv-section" class="adv-section" style="display:none;">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Status <span class="optional">(optional)</span></label>
+                    <select id="bd-status">
+                        <option value="">No change</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority <span class="optional">(optional)</span></label>
+                    <select id="bd-priority">
+                        <option value="">Default</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Assignee <span class="optional">(optional)</span></label>
+                    <select id="bd-assignee">
+                        <option value="">Unassigned</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Due Date <span class="optional">(optional)</span></label>
+                    <input type="date" id="bd-due-date" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Labels <span class="optional">(optional)</span></label>
+                    <input type="text" id="bd-labels" placeholder="frontend, api (comma-separated)" />
+                </div>
+                <div class="form-group">
+                    <label>Story Points <span class="optional">(optional)</span></label>
+                    <input type="number" id="bd-story-points" placeholder="e.g. 3" min="0" max="100" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Execution Team <span class="optional">(optional)</span></label>
+                    <input type="text" id="bd-team" placeholder="e.g. backend, mobile" />
+                </div>
+                <div class="form-group">
+                    <label>CC / Watchers <span class="optional">(optional)</span></label>
+                    <input type="text" id="bd-watchers" placeholder="email or accountId" />
+                </div>
+            </div>
+
+        </div><!-- /adv-section -->
+
+        <button class="btn-primary" id="bd-generate-btn" style="margin-top:10px;">
+            <span id="bd-btn-text">⚡ Generate Breakdown</span>
+            <span id="bd-btn-spinner" class="btn-spinner" style="display:none;">⏳</span>
+        </button>
+    </div>
+
+    <!-- ─── TAB: Create Issue ─── -->
+    <div id="tab-create" class="tab-content" style="display:none;">
+        <div class="form-group">
+            <label>Description <span class="required">*</span></label>
+            <textarea id="cr-description" placeholder="Describe what you want to build…" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Project Key <span class="required">*</span></label>
+                <input type="text" id="cr-project-key" placeholder="e.g. KAN" />
+            </div>
+            <div class="form-group">
+                <label>Subtasks</label>
+                <input type="number" id="cr-num-subtasks" value="5" min="1" max="20" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Issue Type <span id="cr-type-status" class="type-status"></span></label>
+                <select id="cr-issue-type" disabled>
+                    <option value="">Enter project key first…</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status <span class="optional">(optional)</span></label>
+                <input type="text" id="cr-status" placeholder="To Do" />
+            </div>
+        </div>
+        <button class="btn-primary" id="cr-generate-btn">
+            <span id="cr-btn-text">⚡ Generate Issue</span>
+            <span id="cr-btn-spinner" class="btn-spinner" style="display:none;">⏳</span>
+        </button>
+    </div>
+
+    <!-- ─── AI Preview Section ─── -->
+    <div id="preview-section" style="display:none;">
+        <div class="divider"></div>
+        <div class="preview-header">
+            <div class="preview-title">🎯 AI Preview</div>
+            <button class="btn-icon" id="copy-json-btn" title="Copy raw JSON">📋</button>
+        </div>
+
+        <!-- Issue title (for create flow) -->
+        <div id="preview-issue-title" class="issue-title-box" style="display:none;"></div>
+
+        <!-- Description -->
+        <div id="preview-description" class="preview-description"></div>
+
+        <!-- Acceptance Criteria -->
+        <div id="preview-ac-section" style="display:none;">
+            <div class="section-label">✅ Acceptance Criteria</div>
+            <ul id="preview-ac-list" class="ac-list"></ul>
+        </div>
+
+        <!-- Subtasks -->
+        <div class="section-label">📋 Subtasks (<span id="subtask-count">0</span>)</div>
+        <div id="subtasks-container"></div>
+
+        <!-- Confirm button -->
+        <button class="btn-confirm" id="confirm-btn">
+            <span id="confirm-btn-text">🚀 Confirm &amp; Create in Jira</span>
+            <span id="confirm-btn-spinner" class="btn-spinner" style="display:none;">⏳</span>
+        </button>
+    </div>
+
+    <!-- ─── Result Section ─── -->
+    <div id="result-section" style="display:none;">
+        <div class="divider"></div>
+        <div class="result-box">
+            <div class="result-icon">🎉</div>
+            <div id="result-message"></div>
+            <div id="result-links"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display:none;"></div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
